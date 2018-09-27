@@ -1,0 +1,100 @@
+---
+title: "Data Visualization with GGplot2"
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### Jump To
+
+[Getting Started](#getting-started)
+
+[Aesthetic Mappings](#aesthetic-mappings)
+
+#### Getting Started
+
+To use ggplot2 and other datasets/packages used in this chapter, you must load the tidyverse library:
+
+```{r warning=FALSE, message=FALSE}
+library(tidyverse)
+```
+
+Here's a question that we want to answer with data: **Do cars with bigger engines use more fuel than cars with smaller engines?** We will attmept to answer this question using the built-in R dataframe 'mpg'. The dataframe is included in the ggplot2 package.
+
+```{r}
+cars <- ggplot2::mpg
+head(cars)
+```
+
+When working with dataframes, it is a good idea to know **how much data** you are working with. R has built in functions that allow us to determine how many columns or rows a dataframe has. These are nrow() and ncol(). The cat() function allows us to print the two different types of data.
+
+```{r}
+cat("rows:   ",nrow(cars),"\n")
+cat("columns:",ncol(cars))
+```
+
+The **mpg dataset** provides many factors related to different car makes and models. Two of the factors that are likely important for studying our question are 'displ', which gives the engine size in liters, and 'hwy', which gives the fuel economy in miles per gallon. To observe a relationship between these two factors, we can make a scatter plot of the data. To make a scatter plot using ggplot, we must tell ggplot which data to use and how to diplay the plot.
+
+
+```{r}
+ggplot(data = cars) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+```
+
+
+Clearly, there is a negative relationship between engine size and fuel econmy. Thus, we already have a pretty clear picture that cars with larger engines are generally less fuel efficient. **So how does ggplot actually take the data and generate the plot above?**
+
+* ggplot()
+    + This function creates a coordinate system that you can add layers to
+    + The first argument of the function is the dataset that will be used in plotting
+    + This function on its own creates an empty graph with the intent to populate it
+* geom_point()
+    + This is the first layer added to the empty graph
+    + It adds a layer of points to the plot
+    + There are many 'geom' functions that allow you to add different types of layers
+* mapping = aes()
+    + The mapping argument defines how variables in the dataset are mapped to the plot
+    + x and y arguments specify where the variables are to be placed
+
+You can also create reuseable graphing templates using '< >'. For the graphing style above, this would look like the following:
+
+```
+ggplot(data = <DATA>) +
+  <GEOM_FUNCTION>(mapping = aes(<MAPPINGS>))
+```
+
+Do we see the same trend when we plot the number of cylinders a car's engine has versus fuel economy?
+
+```{r}
+ggplot(data = cars) +
+  geom_point(mapping = aes(x = cyl,y = hwy))
+```
+
+
+#### Aesthetic Mappings
+
+The scatter plots generated in the previous section are helpful, but we might stand to gain a better picture of the trends if we can display other types of data as well. Perhaps car class effects fuel economy as well? e.i. compact cars might have better mileages than SUVs. We can tackle this visualization problem using aesthetic mappings. 
+An aesthetic is a visual property of the obkects in your plot. These might include: size, shape, color, etc. Lets use a third variable (class) to generate an aesthetic mapping  by car class:
+
+
+```{r}
+ggplot(data = cars) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = class))
+```
+
+
+With this mapping of class onto the data, we can see that SUVs and pickups tend to have larger engines and lower fuel economies while compact, subcompact, and midsizes tend to have smaller engines and higher fuel economies. Note that the mapping must be performed withing aes() and that colors are automatically assigned to each different class.
+Some other mappings we could have used:
+* size
+* alpha
+* shape
+
+To **manually set the visual properites** of the plot, the aesthetic must be defined outside of aes(). The following code sets the point color to red:
+
+```{r}
+ggplot(data = cars) +
+  geom_point(mapping = aes(x = displ, y = hwy), color = "red")
+```
